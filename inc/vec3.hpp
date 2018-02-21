@@ -1,9 +1,12 @@
 #ifndef _VEC_HPP_
 #define _VEC_HPP_
+
 namespace ray_tracer
 {
   namespace math
   {
+    #define PI 3.14159265f
+
     /** \brief simple 3d Vector
      */
     struct Vec3f
@@ -134,10 +137,10 @@ namespace ray_tracer
 
       /** \brief getter for a specific element
        */
-      float operator [](int i, int j) const;
+      float GetValue(int i, int j) const;
       /** \brief setter for a specific element
        */
-      float& operator [](int i, int j);
+      void SetValue(float value, int i, int j);
 
       /** \brief simple addidtion of matrices
        */
@@ -165,8 +168,6 @@ namespace ray_tracer
       Matrix3x3& operator *=(const Matrix3x3& other);
 
       /** \brief Matrix Vector multiplication
-
-	  \todo continue implementing
        */
       Vec3f operator *(const Vec3f& other) const;
 

@@ -3,7 +3,7 @@
 
 using namespace ray_tracer::math;
 
-Vec3f::Vec3f(): this(0.0f, 0.0f, 0.0f)
+Vec3f::Vec3f(): Vec3f(0.0f, 0.0f, 0.0f)
 {
 }
 
@@ -122,7 +122,7 @@ Vec3f Vec3f::operator /(float other) const
   return Vec3f(m_X/other, m_Y/other, m_Z/other);
 }
 
-Vec3f Vec3f::operator /=(float other)
+Vec3f& Vec3f::operator /=(float other)
 {
   m_X /= other;
   m_Y /= other;
@@ -153,14 +153,14 @@ Vec3f Vec3f::Cross(const Vec3f& other) const
   return Vec3f(x, y, z);
 }
 
-Vec3f operator *(float lhs, const Vec3f& rhs)
+Vec3f ray_tracer::math::operator *(float lhs, const Vec3f& rhs)
 {
   return rhs * lhs;
 }
 
 Matrix3x3::Matrix3x3(float a00, float a01, float a02,
 		     float a10, float a11, float a12,
-		     float a20, float a21, float a22) : r0(a00, a01, a02), r1(a10, a11, a12), r(a20, a21, a22)
+		     float a20, float a21, float a22) : r0(a00, a01, a02), r1(a10, a11, a12), r2(a20, a21, a22)
 {
 }
 
@@ -200,14 +200,14 @@ Vec3f& Matrix3x3::operator [](int i)
     throw 1;
 }
 
-float Matrix3x3::operator [](int i, int j) const
+float Matrix3x3::GetValue(int i, int j) const
 {
-  return this->[i][j];
+  return (*this)[i][j];
 }
 
-float& Matrix3x3::operator [](int i, int j)
+void Matrix3x3::SetValue(float value, int i, int j)
 {
-  return this->[i][j];
+  (*this)[i][j] = value;
 }
 
 Matrix3x3 Matrix3x3::operator +(const Matrix3x3& other) const
@@ -225,7 +225,7 @@ Matrix3x3& Matrix3x3::operator +=(const Matrix3x3& other)
 
 Matrix3x3 Matrix3x3::operator -(const Matrix3x3& other) const
 {
-  return Matrix3x3(-r0, -r1, -r2);
+  return Matrix3x3(r0-other.r0, r1-other.r1, r2-other.r2);
 }
 
 Matrix3x3& Matrix3x3::operator -=(const Matrix3x3& other)
@@ -243,15 +243,15 @@ Matrix3x3 Matrix3x3::operator -() const
 
 Matrix3x3 Matrix3x3::operator *(const Matrix3x3& other) const
 {
-  return Matrix3x3(r0[0]*other[0,0]+r0[1]*other[1,0]+r0[2]*other[2,0],
-		   r0[0]*other[0,1]+r0[1]*other[1,1]+r0[2]*other[2,1],
-		   r0[0]*other[0,2]+r0[1]*other[1,2]+r0[2]*other[2,2],
-		   r1[0]*other[0,0]+r1[1]*other[1,0]+r1[2]*other[2,0],
-		   r1[0]*other[0,1]+r1[1]*other[1,1]+r1[2]*other[2,1],
-		   r1[0]*other[0,2]+r1[1]*other[1,2]+r1[2]*other[2,2],
-		   r2[0]*other[0,0]+r2[1]*other[1,0]+r2[2]*other[2,0],
-		   r2[0]*other[0,1]+r2[1]*other[1,1]+r2[2]*other[2,1],
-		   r2[0]*other[0,2]+r2[1]*other[1,2]+r2[2]*other[2,2]);
+  return Matrix3x3(r0[0]*other.GetValue(0,0)+r0[1]*other.GetValue(1,0)+r0[2]*other.GetValue(2,0),
+		   r0[0]*other.GetValue(0,1)+r0[1]*other.GetValue(1,1)+r0[2]*other.GetValue(2,1),
+		   r0[0]*other.GetValue(0,2)+r0[1]*other.GetValue(1,2)+r0[2]*other.GetValue(2,2),
+		   r1[0]*other.GetValue(0,0)+r1[1]*other.GetValue(1,0)+r1[2]*other.GetValue(2,0),
+		   r1[0]*other.GetValue(0,1)+r1[1]*other.GetValue(1,1)+r1[2]*other.GetValue(2,1),
+		   r1[0]*other.GetValue(0,2)+r1[1]*other.GetValue(1,2)+r1[2]*other.GetValue(2,2),
+		   r2[0]*other.GetValue(0,0)+r2[1]*other.GetValue(1,0)+r2[2]*other.GetValue(2,0),
+		   r2[0]*other.GetValue(0,1)+r2[1]*other.GetValue(1,1)+r2[2]*other.GetValue(2,1),
+		   r2[0]*other.GetValue(0,2)+r2[1]*other.GetValue(1,2)+r2[2]*other.GetValue(2,2));
 }
 
 Matrix3x3& Matrix3x3::operator *=(const Matrix3x3& other)
@@ -276,3 +276,82 @@ Matrix3x3& Matrix3x3::operator *=(const Matrix3x3& other)
   return *this;
 }
 
+Vec3f Matrix3x3::operator *(const Vec3f& other) const
+{
+  float x = r0.Dot(other);
+  float y = r1.Dot(other);
+  float z = r2.Dot(other);
+  return Vec3f(x, y, z);
+}
+
+Matrix3x3 Matrix3x3::operator *(float other) const
+{
+  return Matrix3x3(r0*other, r1*other, r2*other);
+}
+
+Matrix3x3& Matrix3x3::operator *=(float other)
+{
+  r0 *= other;
+  r1 *= other;
+  r2 *= other;
+  return *this;
+}
+
+Matrix3x3 Matrix3x3::operator /(float other) const
+{
+  return Matrix3x3(r0/other, r1/other, r2/other);
+}
+
+Matrix3x3& Matrix3x3::operator /=(float other)
+{
+  r0 /= other;
+  r1 /= other;
+  r2 /= other;
+  return *this;
+}
+
+float Matrix3x3::Det() const
+{
+  return r0[0]*r1[1]*r2[2] + r0[1]*r1[2]*r2[0] + r0[2]*r1[0]*r2[1]
+    - r0[0]*r1[2]*r2[1] - r0[1]*r1[0]*r2[2] - r0[2]*r1[1]*r2[0];
+}
+
+Matrix3x3 Matrix3x3::Transpose() const
+{
+  return Matrix3x3(r0[0], r1[0], r2[0],
+		   r0[1], r1[1], r2[1],
+		   r0[2], r1[2], r2[2]);
+}
+
+Matrix3x3& Matrix3x3::TransposeThis()
+{
+  Vec3f row0(r0[0], r1[0], r2[0]);
+  Vec3f row1(r0[1], r1[1], r2[1]);
+  Vec3f row2(r0[2], r1[2], r2[2]);
+  r0 = row0;
+  r1 = row1;
+  r2 = row2;
+  return *this;
+}
+
+Matrix3x3 ray_tracer::math::operator *(float lhs, const Matrix3x3& rhs)
+{
+  return rhs*lhs;
+}
+
+Vec3f ray_tracer::math::operator *(const Vec3f& lhs, const Matrix3x3& rhs)
+{
+  return rhs.Transpose()*lhs;
+}
+
+Vec3f& ray_tracer::math::operator *=(Vec3f& lhs, const Matrix3x3& rhs)
+{
+  auto M = rhs.Transpose();
+  float x = lhs.Dot(M[0]);
+  float y = lhs.Dot(M[1]);
+  float z = lhs.Dot(M[2]);
+  lhs[0] = x;
+  lhs[1] = y;
+  lhs[2] = z;
+  return lhs;
+}

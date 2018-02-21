@@ -13,6 +13,10 @@ set(INC
 
 set(SRC
   ${SRC_DIR}/main.cpp
+  ${SRC_DIR}/vec3.cpp
+  ${SRC_DIR}/color.cpp
+  ${SRC_DIR}/ray.cpp
+  ${SRC_DIR}/camera.cpp
   )
 
 include_directories(${INC})
