@@ -17,6 +17,9 @@ set(SRC
   ${SRC_DIR}/color.cpp
   ${SRC_DIR}/ray.cpp
   ${SRC_DIR}/camera.cpp
+  ${SRC_DIR}/fileWriter.cpp
+  ${SRC_DIR}/image.cpp
+  ${SRC_DIR}/triangle.cpp
   )
 
 include_directories(${INC})

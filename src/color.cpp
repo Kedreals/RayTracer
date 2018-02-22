@@ -4,6 +4,18 @@ using namespace ray_tracer::light;
 
 Color::Color(float r, float g, float b) : m_r(r), m_g(g), m_b(b)
 {
+  if(m_r < 0)
+    m_r = 0;
+
+  if(m_g < 0)
+    m_g = 0;
+
+  if(m_b < 0)
+    m_b = 0;
+}
+
+Color::Color(double r, double g, double b) : Color((float)r, (float)g, (float)b)
+{
 }
 
 Color::Color(unsigned char r, unsigned char g, unsigned char b) : Color((float)r/255.0f, (float)g/255.0f, (float)b/255.0f)
