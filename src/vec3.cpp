@@ -140,6 +140,11 @@ float Vec3f::Norm2() const
   return this->Dot(*this);
 }
 
+float Vec3f::Length() const
+{
+  return sqrt(this->Norm2());
+}
+
 float Vec3f::Dot(const Vec3f& other) const
 {
   return m_X*other[0] + m_Y*other[1] + m_Z*other[2];

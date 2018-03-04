@@ -3,7 +3,6 @@
 
 #include "image.hpp"
 #include "ray.hpp"
-#include <string>
 
 namespace ray_tracer
 {
@@ -30,7 +29,7 @@ namespace ray_tracer
 
       /** \brief Generates a Ray through the middle of the specified pixel
        */
-      Ray GenerateRay(unsigned int pixel_x, unsigned int pixel_y) const;
+      Ray GenerateRay(unsigned int pixel_x, unsigned int pixel_y, int max_multisampling = 1, int multisampling_step = 0) const;
       /** \brief set the Color of the image at that pixel
        */
       void SetPixel(unsigned int x, unsigned int y, const light::Color& value);

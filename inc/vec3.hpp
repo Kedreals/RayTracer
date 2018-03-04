@@ -93,6 +93,11 @@ namespace ray_tracer
       /** \brief sqaured length of the vector
        */
       float Norm2() const;
+      /** \brief synonym for Norm
+	  
+	  \sa float Norm() const
+       */
+      float Length() const;
 
       /** \brief dot product of 2 Vectors
        */
@@ -206,6 +211,8 @@ namespace ray_tracer
     /** \brief interpret the vector as row and do matrix vector multiplication
      */
     Vec3f& operator *=(Vec3f& lhs, const Matrix3x3& rhs);
+
+    typedef Matrix3x3 Mat3x3;
   }
 }
 

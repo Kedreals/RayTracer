@@ -1,6 +1,5 @@
 #include "camera.hpp"
 #include <cmath>
-#include <iostream>
 
 namespace ray_tracer
 {
@@ -17,14 +16,37 @@ namespace ray_tracer
     {
     }
 
-    Ray Camera::GenerateRay(unsigned int pixel_x, unsigned int pixel_y) const
+    float GenerateOffset(int max_multisampling, int step, bool xDir)
+    {
+      int count = (int)sqrt(max_multisampling);
+      float width = 1.0f / (count + 1.0f);
+      
+      if(xDir)
+	{
+	  return (1 + (step % count))*width;
+	}
+      else
+	{
+	  return (1+(step / count))*width;
+	}
+    }
+    
+    Ray Camera::GenerateRay(unsigned int pixel_x, unsigned int pixel_y, int max_multisampling, int multisampling_step) const
     {
       Vec3f o(0.0f, 0.0f, 0.0f);
 
       float step = (2*m_fov)/(float)m_width;
-      float x = -m_fov + ((float)pixel_x + 0.5f) * step;
+
+      //generate x offset for the sampling step
+      float r = GenerateOffset(max_multisampling, multisampling_step, true);
+      
+      float x = -m_fov + ((float)pixel_x + r) * step;
+
+      //generate y offset for the sampling step
+      r = GenerateOffset(max_multisampling, multisampling_step, false);
+
       step = step*(float)m_width /(float)m_height;
-      float y = -m_fov + ((float)pixel_y + 0.5f) * step;
+      float y = -m_fov + ((float)pixel_y + r) * step;
 
       Vec3f d(sin(x)*cos(y), sin(y), cos(x)*cos(y));
       return Ray(o, d);

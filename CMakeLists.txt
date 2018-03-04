@@ -20,6 +20,7 @@ set(SRC
   ${SRC_DIR}/fileWriter.cpp
   ${SRC_DIR}/image.cpp
   ${SRC_DIR}/triangle.cpp
+  ${SRC_DIR}/monteCarlo.cpp
   )
 
 include_directories(${INC})

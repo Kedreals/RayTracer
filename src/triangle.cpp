@@ -4,13 +4,19 @@
 
 using namespace ray_tracer::math;
 using namespace ray_tracer::core;
+using namespace ray_tracer::light;
 
 namespace ray_tracer
 {
   namespace geometry
   {
-    Triangle::Triangle(const Vec3f& a, const Vec3f& b, const Vec3f& c) : m_a(a), m_b(b), m_c(c)
+    Triangle::Triangle(const Vec3f& a, const Vec3f& b, const Vec3f& c, float ell) : Triangle(a, b, c, Color(1.0f, 1.0f, 1.0f), ell)
     {
+    }
+
+    Triangle::Triangle(const Vec3f& a, const Vec3f& b, const Vec3f& c, const Color& color, float ell) : m_ell(ell), m_a(a), m_b(b), m_c(c), m_color(color)
+    {
+      m_ell /= Area();
     }
 
     Triangle::Triangle(const Triangle& other) : m_a(other.m_a), m_b(other.m_b), m_c(other.m_c)
@@ -59,6 +65,27 @@ namespace ray_tracer
       ray.SetT(t);
       
       return true;
+    }
+
+    float Triangle::Area() const
+    {
+      return (m_b-m_a).Cross(m_c-m_a).Length()/2.0f;
+    }
+
+    const Color& Triangle::GetColor() const
+    {
+      return m_color;
+    }
+
+    float Triangle::GetEll() const
+    {
+      return m_ell;
+    }
+
+    Vec3f Triangle::GetNormal() const
+    {
+      Vec3f n = (m_b-m_a).Cross(m_c-m_a);
+      return n / n.Length();
     }
   }
 }
