@@ -7,6 +7,18 @@ namespace ray_tracer
   {
     using namespace math;
 
+    Intersection::Intersection() : Ell(0.0f), Pos(), N(), Color()
+    {
+    }
+
+    Intersection::Intersection(const Intersection& other) : Ell(other.Ell), Pos(other.Pos), N(other.N), Color(other.Color)
+    {
+    }
+
+    Intersection::~Intersection()
+    {
+    }
+    
     Ray::Ray(const Vec3f& origin, const Vec3f& direction) : m_origin(origin), m_direction(direction / direction.Norm()), m_t(std::numeric_limits<float>::infinity())
     {
     }

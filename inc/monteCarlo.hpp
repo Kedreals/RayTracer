@@ -1,7 +1,7 @@
 #ifndef _MONTE_CARLO_HPP_
 #define _MONTE_CARLO_HPP_
 
-#include "triangle.hpp"
+#include "scene.hpp"
 
 namespace ray_tracer
 {
@@ -39,7 +39,7 @@ namespace ray_tracer
 	centered around \a n. Then the intersections with the lights are evaluated. Finaly the sum
 	of all hit light sources is divided by \a sampleCount.
      */
-    light::Color MonteCarlo(const Vec3f& pos, const Vec3f& n,int numObj , const geometry::Triangle* obj,int numlights, const geometry::Triangle* lights, int sampleCount = 64);
+    light::Color MonteCarlo(const Vec3f& pos, const Vec3f& n, const core::Scene& scene, int sampleCount = 64);
   }
 }
 

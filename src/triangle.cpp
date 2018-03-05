@@ -27,9 +27,9 @@ namespace ray_tracer
     {
     }
 
-    bool Triangle::Intersect(Ray& ray) const
+    bool Triangle::Intersect(Ray& ray, Intersection& i) const
     {
-      Vec3f n = (m_b-m_a).Cross(m_c - m_a);
+      Vec3f n = GetNormal();
       float pn = m_a.Dot(n);
       float t = (-ray.O().Dot(n) + pn)/(ray.D().Dot(n));
 
@@ -63,6 +63,10 @@ namespace ray_tracer
 	return false;
 
       ray.SetT(t);
+      i.Ell = m_ell;
+      i.Pos = ray();
+      i.N = n;
+      i.Color = m_color;
       
       return true;
     }

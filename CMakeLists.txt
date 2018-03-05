@@ -21,6 +21,8 @@ set(SRC
   ${SRC_DIR}/image.cpp
   ${SRC_DIR}/triangle.cpp
   ${SRC_DIR}/monteCarlo.cpp
+  ${SRC_DIR}/model.cpp
+  ${SRC_DIR}/scene.cpp
   )
 
 include_directories(${INC})

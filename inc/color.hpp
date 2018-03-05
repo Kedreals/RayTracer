@@ -5,6 +5,8 @@
 
 namespace ray_tracer
 {
+  /** \brief contains structs and functions which are tied to the interaction of light
+   */
   namespace light
   {
     /** \brief a simple struct containing the basic color interactions

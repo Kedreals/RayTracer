@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <cmath>
 
-using namespace ray_tracer::geometry;
 using namespace ray_tracer::light;
 using namespace ray_tracer::core;
 
@@ -76,41 +75,18 @@ namespace ray_tracer
       return TransformH2ToR3(n, CosWeightedH2());
     }
 
-    Color MonteCarlo(const Vec3f& pos, const Vec3f& n, int numObj, const Triangle* obj, int numLights, const Triangle* lights, int sampleCount)
+    Color MonteCarlo(const Vec3f& pos, const Vec3f& n, const Scene& scene, int sampleCount)
     {
       Color res(0.0, 0.0, 0.0);
 
       for(int i = 0; i < sampleCount; ++i)
 	{
-	  Vec3f o = pos + 0.001f*n;
-	  Vec3f d = CosWeightedPointR3(n);
-	  Ray r(o, d);
-	  bool intersection = false;
-	  Color c(1.0, 1.0, 1.0);
-	  for(int j = 0; j < numLights; ++j)
-	    {
-	      if(lights[j].Intersect(r))
-		{
-		  intersection = true;
-		  c = lights[j].GetColor()*lights[j].GetEll();
-		}
-	    }
-	  if(!intersection)
-	    continue;
+	  Intersection intersect;
+	  Ray r(pos + 0.001f*n, CosWeightedPointR3(n));
 
-	  for(int j = 0; j<numObj; ++j)
-	    {
-	      if(obj[j].Intersect(r))
-		{
-		  intersection = false;
-		  break;
-		}
-	    }
-	  if(!intersection)
-	    continue;
-
-	  //implicitly used diffuse BSDF 1/Pi cancels with correction factor for Monte Carlo Pi
-	  res += c;
+	  if(scene.Intersect(r, intersect))
+	    //implicitly used diffuse BSDF 1/Pi cancels with correction factor for Monte Carlo Pi
+	    res += intersect.Color*intersect.Ell;
 	}
       res *= 1.0f/sampleCount;
       

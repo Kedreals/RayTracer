@@ -35,20 +35,22 @@ namespace ray_tracer
     {
       Vec3f o(0.0f, 0.0f, 0.0f);
 
-      float step = (2*m_fov)/(float)m_width;
+      float xmax = tan(m_fov);
+      float step = 2.0f*xmax/(float)m_width;
 
       //generate x offset for the sampling step
       float r = GenerateOffset(max_multisampling, multisampling_step, true);
       
-      float x = -m_fov + ((float)pixel_x + r) * step;
+      float x = -xmax + ((float)pixel_x + r) * step;
 
       //generate y offset for the sampling step
       r = GenerateOffset(max_multisampling, multisampling_step, false);
 
       step = step*(float)m_width /(float)m_height;
-      float y = -m_fov + ((float)pixel_y + r) * step;
+      float y = -xmax + ((float)pixel_y + r) * step;
 
-      Vec3f d(sin(x)*cos(y), sin(y), cos(x)*cos(y));
+      Vec3f d(x, y, 1);
+      d /= d.Length();
       return Ray(o, d);
     }
 

@@ -2,10 +2,11 @@
 #define _TRIANGLE_HPP_
 
 #include "ray.hpp"
-#include "color.hpp"
 
 namespace ray_tracer
 {
+  /** \brief contains all structs and function which are essential for geometry
+   */
   namespace geometry
   {
     /** \brief simple triangle
@@ -33,7 +34,7 @@ namespace ray_tracer
 
       /** \brief intersection test using barycentric coordinates
        */
-      bool Intersect(core::Ray& ray) const;
+      bool Intersect(core::Ray& ray, core::Intersection& intersection) const;
 
       /** \brief calculates the area of the triangle
        */

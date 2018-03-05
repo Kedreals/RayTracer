@@ -8,6 +8,8 @@ namespace ray_tracer
 {
   namespace core
   {
+    /** \brief simple class containing a way to scale the raw data to fit in 0 to 1
+     */
     struct Image
     {
     private:

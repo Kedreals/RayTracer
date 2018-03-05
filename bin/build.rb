@@ -13,8 +13,14 @@ if ARGV[1] != nil
   end
 end
 if v == "exe" || v == "all"
-  system('cmake ../')
-  system('make')
-  system('./ray_tracer')
+  if !system('cmake ../')
+    return
+  end
+  if !system('make')
+    return
+  end
+  if !system('./ray_tracer')
+    return
+  end
   system('xdg-open test.ppm')
 end

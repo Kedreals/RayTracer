@@ -6,6 +6,7 @@ namespace ray_tracer
   namespace core
   {
     /** \brief simple memory Arena
+	\todo implement
      */
     struct Arena
     {

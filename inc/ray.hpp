@@ -2,11 +2,31 @@
 #define _RAY_HPP_
 
 #include "vec3.hpp"
+#include "color.hpp"
 
 namespace ray_tracer
 {
   namespace core
   {
+    /** \brief simple struct for intersection data
+     */
+    struct Intersection
+    {
+    public:
+      /** \brief init a intersection
+       */
+      Intersection();
+      /** \brief copy ctor
+       */
+      Intersection(const Intersection& other);
+      /** \brief default dtor
+       */
+      ~Intersection();
+    public:
+      float Ell;
+      math::Vec3f Pos, N;
+      light::Color Color;
+    };
     /** \brief simple ray class
      */
     struct Ray

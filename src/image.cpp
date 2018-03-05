@@ -112,7 +112,7 @@ namespace ray_tracer
       Color* scaledImage = ScaleLog(m_data, m_width*m_height, m_highest);
 
       if(ending == ".ppm")
-	SavePPM(m_data, m_width, m_height, fileName);
+	SavePPM(scaledImage, m_width, m_height, fileName);
 
       delete[] scaledImage;
     }

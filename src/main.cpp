@@ -1,22 +1,14 @@
-#include <iostream>
 #include "camera.hpp"
-#include <cmath>
-#include "triangle.hpp"
-#include "main.cuh"
 #include "monteCarlo.hpp"
 #include <ctime>
 
-using namespace ray_tracer::math;
 using namespace ray_tracer::core;
 using namespace ray_tracer::light;
-using namespace ray_tracer::geometry;
 
-/** \todo Intersection class
-    \todo scene class
+/** \todo indirect light
     \todo loading a scene
     \todo vertex class
     \todo bounding volume hirarchy
-    \todo model class
     \todo implementing cuda functions
  */
 
@@ -36,25 +28,13 @@ int main()
   int resolution = 512;
   
   Camera c(resolution, resolution);
-  
-  Triangle* obj = (Triangle*)malloc(2*sizeof(Triangle));
-  Triangle* lights = (Triangle*)malloc(2*sizeof(Triangle));
 
-  float xstart = -5.0;
-  float y = 3.0;
-  float zstart = 0.0;
-  float xdim = 10.0;
-  float zdim = 10.0;
+  Scene scene;
   
-  obj[0] = Triangle(Vec3f(xstart, y, zstart), Vec3f(xstart+xdim, y, zstart), Vec3f(xstart+xdim, y, zstart+zdim));
-  obj[1] = Triangle(Vec3f(xstart, y, zstart), Vec3f(xstart+xdim, y, zstart+zdim), Vec3f(xstart, y, zstart+zdim));
+  int multisampling = 4;
+  int directLightSampleCount = 128;
 
-  lights[0] = Triangle(Vec3f(xstart+0.35f*xdim, -y, zstart+0.35f*zdim), Vec3f(xstart+0.65f*xdim, -y, zstart+0.35f*zdim), Vec3f(xstart+0.65f*xdim, -y, zstart+0.65f*zdim), 100.0f);
-  lights[1] = Triangle(Vec3f(xstart+0.35f*xdim, -y, zstart+0.35f*zdim), Vec3f(xstart+0.65f*xdim, -y, zstart+0.65f*zdim), Vec3f(xstart+0.35f*xdim, -y, zstart+0.65f*zdim), 100.0f);
-  
-  int multisampling = 16;
-
-  printf("Start rendering a %ix%i image with %i multisampling\n", resolution, resolution, multisampling);
+  printf("Start rendering a %ix%i image with %i sample per pixel and %i direct light samples\n", resolution, resolution, multisampling, directLightSampleCount);
   clock_t t1 = clock();
   for(int i = 0; i < resolution; ++i){
     printProgress(i, resolution);
@@ -62,28 +42,12 @@ int main()
       Color color(0.0f, 0.0f, 0.0f);
       for(int k = 0; k < multisampling; ++k)
 	{
-	  Triangle* t;
-	  bool intersection = false;
 	  Ray v = c.GenerateRay(j,i, multisampling, k);
-	  for(int l = 0; l < 2; ++l)
-	    {
-	      if(obj[l].Intersect(v))
-		{
-		  intersection = true;
-		  t = &obj[l];
-		}
-	    }
-	  for(int l = 0; l < 2; ++l)
-	    {
-	      if(lights[l].Intersect(v))
-		{
-		  intersection = true;
-		  t = &lights[l];
-		}
-	    }
-
-	  if(intersection)
-	    color += t->GetColor()*(MonteCarlo(v(), t->GetNormal(), 2, obj, 2, lights, 128) + t->GetEll());
+	  Intersection intersect;
+	  
+	  if(scene.Intersect(v, intersect)){
+	    color += intersect.Color*(MonteCarlo(intersect.Pos, intersect.N, scene, directLightSampleCount) + intersect.Ell);
+	  }
 	}
       c.SetPixel(j, i, color*(1.0f/static_cast<float>(multisampling)));
     }
@@ -91,11 +55,13 @@ int main()
   t1 = clock() - t1;
   printProgress(resolution, resolution);
   std::cout << std::endl;
-  printf("rendering took %fs\n", (float)t1/(float)CLOCKS_PER_SEC);
+  float s = (float)t1/(float)CLOCKS_PER_SEC;
+  int min = (int)s / 60;
+  s = ((int)s*100 % 6000)/100.0f;
+  int h = min / 60;
+  min = min % 60;
+  printf("rendering took %ih %im %fs\n", h, min, s);
   c.SaveImage("test.ppm");
-
-  free(obj);
-  free(lights);
   
   return 0;
 }

@@ -3,6 +3,8 @@
 
 namespace ray_tracer
 {
+  /** \brief contains structs and functions for doing math ;)
+   */
   namespace math
   {
     #define PI 3.14159265f
